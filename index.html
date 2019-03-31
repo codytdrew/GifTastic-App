@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Cody's GifTastic App!</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="./assets/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body style="background-color: lightslategray">
+
+<div id="container">
+    <div id="press-me">
+    <button class="btn btn-primary" data-person="Surfing">Surfing</button>
+    <button class="btn btn-primary" data-person="Food">Food</button>
+    <button class="btn btn-primary" data-person="Travel">Travel</button>
+    <button class="btn btn-primary" data-person="Hiking">Hiking</button>
+    <button class="btn btn-primary" data-person="Music">Music</button>
+    <button class="btn btn-primary" data-person="Snowboarding">Snowboarding</button>
+    <button class="btn btn-primary" data-person="Animals">Animals</button>
+    <button class="btn btn-primary" data-person="Technology">Technology</button>
+    <button class="btn btn-primary" data-person="Coffee">Coffee</button>
+    </div>  
+
+    <form id="find-gif">
+            <label for="gif-input"><b>Search for a Gif: <b></label>
+            <input type="text" id="gif-input"><br>
+      
+            <!-- This button will trigger our AJAX call -->
+            <input id="find-gif" style="margin: 2% 0%" type="submit" value="Gif Search">
+          </form>
+
+    <div id="gif-box"></div>
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+    //Creating an array of topic items to be stored
+    var topics = ["Surfing", "Food", "Travel", "Hiking", "Music", "Snowboarding", "Animals", "Technology", "Coffee"];
+   
+    //Adding click event listener to all of the buttons
+    $("button").on("click", function() {
+
+    //Grabbing and storing the data-person property value from the buttons
+    var pictoral = $(this).attr("data-person");
+
+
+    // Stores my giphy API URL for topic images using pictoral name
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + 
+    pictoral + "&api_key=8QUeMwkWp2rgQvNqocUtyz2hhtYSd2kP&limit=10";
+
+    // Performs an AJAX get request for my queryURL
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+
+    // Run this function after the data from the AJAX request comes back
+    }).then(function(response) {
+        console.log(response);
+        console.log(queryURL);
+
+        //Storing data from AJAX request in the results variable
+        var result = response.data;
+
+        //Looping for every result item
+        for (let i = 0; i < result.length; i++) {
+
+            //Creating and storing an img tag for the gifs
+            var imageBucket = $("<img>");
+
+            var state = $(this).attr("data-state");
+            // 
+            var url = result[i].images.fixed_height_still.url; // use still image instead of fixed - also look at OMDB activity
+            var urlAnimate = result[i].images.fixed_height.url;
+ 
+            // Setting the imageBucket src attributr to url
+            imageBucket.attr("src", url);
+            imageBucket.attr("data-still", url);
+            imageBucket.attr("animate", urlAnimate);
+            imageBucket.attr("class", "pictures-move")
+            
+            //Prepending imageBucket to the gif-box div
+            $("#gif-box").prepend(imageBucket);
+        }
+    });
+    // I have no idea how to make the pictures animate and pause
+    $(document).on("click", "pictures-move", function () {
+    if (state === "still") {
+        $(this).attr("src", $(this).attr("data-animate"));
+        $(this).attr("data-state", "animate");
+        } else {
+        $(this).attr("src", $(this).attr("data-still"));
+        $(this).attr("data-state", "still");
+        }
+    })
+    })
+    $("#find-gif").on("click", function(event) {
+
+
+    event.preventDefault();
+
+    // Here we grab the text from the input box
+    // I cannot figure out how to make this work?????????
+    var gif = $("#gif-input").val();
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + 
+    gif + "&api_key=8QUeMwkWp2rgQvNqocUtyz2hhtYSd2kP&limit=10";
+
+    $.ajax({
+          url: queryURL,
+          method: "GET"
+        }).then(function(response) {
+          $("#find-gif").text(JSON.stringify(response));
+        })
+    });
+
+    </script>
+</body>
+</html>

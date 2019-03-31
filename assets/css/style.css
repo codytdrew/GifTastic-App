@@ -1,0 +1,17 @@
+#container {
+    margin: auto;
+}
+#gif-box {
+    width: 1000px;
+    margin: 5% 0% 5% 2%
+}
+body {
+    background-color: lightslategray;
+    font-family: bolder;
+}
+#press-me {
+    margin: 2% 1%;
+}
+#find-gif {
+    margin: 2% 1%;
+}
