@@ -21,13 +21,13 @@
     <button class="btn btn-primary" data-person="Coffee">Coffee</button>
     </div>  
 
-    <form id="find-gif">
+  
             <label for="gif-input"><b>Search for a Gif: <b></label>
             <input type="text" id="gif-input"><br>
       
             <!-- This button will trigger our AJAX call -->
-            <input id="find-gif" style="margin: 2% 0%" type="submit" value="Gif Search">
-          </form>
+            <button id="find-gif" style="margin: 2% 0%" type="submit" value="Gif Search">Add</button>
+
 
     <div id="gif-box"></div>
 </div>
@@ -39,7 +39,7 @@
     var topics = ["Surfing", "Food", "Travel", "Hiking", "Music", "Snowboarding", "Animals", "Technology", "Coffee"];
    
     //Adding click event listener to all of the buttons
-    $("button").on("click", function() {
+    $(document).on("click", ".btn-primary", function() {
 
     //Grabbing and storing the data-person property value from the buttons
     var pictoral = $(this).attr("data-person");
@@ -68,7 +68,7 @@
             //Creating and storing an img tag for the gifs
             var imageBucket = $("<img>");
 
-            var state = $(this).attr("data-state");
+            $(this).attr("data-state", "still");
             // 
             var url = result[i].images.fixed_height_still.url; // use still image instead of fixed - also look at OMDB activity
             var urlAnimate = result[i].images.fixed_height.url;
@@ -76,7 +76,7 @@
             // Setting the imageBucket src attributr to url
             imageBucket.attr("src", url);
             imageBucket.attr("data-still", url);
-            imageBucket.attr("animate", urlAnimate);
+            imageBucket.attr("data-animate", urlAnimate);
             imageBucket.attr("class", "pictures-move")
             
             //Prepending imageBucket to the gif-box div
@@ -84,33 +84,34 @@
         }
     });
     // I have no idea how to make the pictures animate and pause
-    $(document).on("click", "pictures-move", function () {
-    if (state === "still") {
-        $(this).attr("src", $(this).attr("data-animate"));
-        $(this).attr("data-state", "animate");
+    
+    })
+    $(document).on("click", ".pictures-move", function () {
+        if ($(this).attr("data-state") === "still") {
+            $(this).attr("src", $(this).attr("data-animate"));
+            $(this).attr("data-state", "animate");
         } else {
-        $(this).attr("src", $(this).attr("data-still"));
-        $(this).attr("data-state", "still");
+            $(this).attr("src", $(this).attr("data-still"));
+            $(this).attr("data-state", "still");
         }
     })
-    })
+
     $("#find-gif").on("click", function(event) {
+        event.preventDefault();
 
+        // Here we grab the text from the input box
+        // I cannot figure out how to make this work?????????
+        var gifName = $("#gif-input").val();
+        console.log(gifName)
+        
+        var iButton = $("<button>");
 
-    event.preventDefault();
+        iButton.attr("class", "btn btn-primary");
+        iButton.attr("data-person", gifName)
+        iButton.text(gifName)
 
-    // Here we grab the text from the input box
-    // I cannot figure out how to make this work?????????
-    var gif = $("#gif-input").val();
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + 
-    gif + "&api_key=8QUeMwkWp2rgQvNqocUtyz2hhtYSd2kP&limit=10";
-
-    $.ajax({
-          url: queryURL,
-          method: "GET"
-        }).then(function(response) {
-          $("#find-gif").text(JSON.stringify(response));
-        })
+        $("#press-me").append(iButton);
+    
     });
 
     </script>
